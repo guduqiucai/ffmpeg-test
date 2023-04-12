@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
     request.files[name] = file;//这里提取上传的文件
   });
   await form.on('end', async function () {
-    console.log('end');
     // 默认保存的文件名是随机串
     for (var k in request.files) {
       var f = request.files[k];
@@ -33,13 +32,11 @@ export default defineEventHandler(async (event) => {
         // 图片压缩
         await cp.execSync(`ffmpeg -i ${filePath}/origin_${f.originalFilename} -vf scale=-1:100 ${filePath}/after_${f.originalFilename}`)
       } else if (f.mimetype.indexOf('video/') == 0) {
-        console.log(1111111111111)
-        await fs.rename(f.filepath, filePath + "/" + n, async function(err){
-          if(err) throw err;
+        await fs.rename(f.filepath, filePath + "/" + n, async function (err) {
+          if (err) throw err;
           // 视频抽帧
           await cp.execSync(`ffmpeg -i ${filePath}/origin_${f.originalFilename} -ss 1 -vframes 1 ${filePath}/after_pic.png`)
         });
-
       }
     }
   });
